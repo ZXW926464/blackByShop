@@ -140,7 +140,7 @@ export default {
   created() {
     //   顶部数据
     this.$axios
-      .get("http://111.230.232.110:8899/site/goods/gettopdata/goods")
+      .get("site/goods/gettopdata/goods")
       .then(res => {
         this.catelist = res.data.message.catelist;
         this.sliderlist = res.data.message.sliderlist;
@@ -148,7 +148,7 @@ export default {
       });
 
       //底部数据
-      this.$axios.get("http://111.230.232.110:8899/site/goods/getgoodsgroup").then(res=>{
+      this.$axios.get("site/goods/getgoodsgroup").then(res=>{
         //   console.log(res);
         this.grouplist=res.data.message
       })

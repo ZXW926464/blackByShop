@@ -12,6 +12,7 @@ Vue.use(VueRouter)
 // 导入axios
 import axios from "axios";
 Vue.prototype.$axios=axios
+axios.defaults.baseURL = 'http://111.230.232.110:8899/';
 
 //导入element-ui
 import ElementUI from 'element-ui';
@@ -42,11 +43,11 @@ let router = new VueRouter({
 
 
 // 导入 moment.js
-import moment from "moment";
-//全局过滤器
-Vue.filter('shorTime',  (value)=> {
-  return moment(value).format("YYYY--MM~~DD");
-})
+                      import moment from "moment";
+                      //全局过滤器
+                      Vue.filter('shorTime',  (value)=> {
+                        return moment(value).format("YYYY--MM~~DD");
+                      })
 Vue.filter('shorTimeP',  (value)=> {
   return moment(value).format("YYYY/MM/DD HH:mm:ss");
 })

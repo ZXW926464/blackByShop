@@ -80,11 +80,11 @@
                                         </div>
                                         <div class="conn-box">
                                             <div class="editor">
-                                                <textarea id="txtContent" name="txtContent" sucmsg=" " datatype="*10-1000" nullmsg="请填写评论内容！"></textarea>
+                                                <textarea  v-model="sbcomments" id="txtContent" name="txtContent" sucmsg=" " datatype="*10-1000" nullmsg="请填写评论内容！"></textarea>
                                                 <span class="Validform_checktip"></span>
                                             </div>
                                             <div class="subcon">
-                                                <input id="btnSubmit" name="submit" type="submit" value="提交评论" class="submit">
+                                                <input id="btnSubmit" name="submit" type="submit" value="提交评论" @click="sbComments" class="submit">
                                                 <span class="Validform_checktip"></span>
                                             </div>
                                         </div>
@@ -105,7 +105,7 @@
                                         </li>
                                     </ul>
                                     <div class="page-box" style="margin: 5px 0px 0px 62px;">
-                                         <Page @on-change="pageChange" :total="totalcount" placement='top' :page-size-opts="[5,10,20]" :page-size="pageSize" @on-page-size-change="sizeChange" show-sizer show-elevator/>
+                                         <Page :current='pageIndex' @on-change="pageChange" :total="totalcount" placement='top' :page-size-opts="[5,10,20]" :page-size="pageSize" @on-page-size-change="sizeChange" show-sizer show-elevator/>
                                     </div>
                                 </div>
                             </div>
@@ -162,14 +162,16 @@ export default {
             // 评论内容
             comments:[],
             //评论总数
-            totalcount:0
+            totalcount:0,
+            // 评论内容
+            sbcomments:''
         }
     },
     methods: {
         //初始化数据
         initData(){
             this.artID = this.$route.params.id;
-            this.$axios.get(`http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`).then(res=>{
+            this.$axios.get(`site/goods/getgoodsinfo/${this.artID}`).then(res=>{
             // console.log(res);
             this.goodsinfo=res.data.message.goodsinfo
             this.hotgoodslist=res.data.message.hotgoodslist
@@ -180,7 +182,7 @@ export default {
         },
         //获取评论数据
         getComments(){
-            this.$axios.get(`http://111.230.232.110:8899/site/comment/getbypage/goods/${this.artID}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`).then(res=>{
+            this.$axios.get(`site/comment/getbypage/goods/${this.artID}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`).then(res=>{
             // console.log(res);
             this.comments=res.data.message;
             this.totalcount=res.data.totalcount
@@ -196,6 +198,26 @@ export default {
         sizeChange(pageSize){
             this.pageSize=pageSize
             this.getComments();
+        },
+        // 提交评论
+        sbComments(){
+            if(this.sbcomments==''){
+                 this.$Message.warning('请输入评论内容!');
+            }else{
+                this.$axios.post(`site/validate/comment/post/goods/${this.artID}`,{
+                    commenttxt:this.sbcomments
+                }).then(res=>{
+                    // console.log(res);
+                    if(res.data.status==0){
+                        this.$Message.success('评论成功');
+                        this.sbcomments=''
+                        this.pageIndex=1
+                        this.getComments()
+                    }else{
+                        this.$Message.warning('评论失败');
+                    }
+                })
+            }
         }
     },
     created(){
