@@ -1,0 +1,114 @@
+[1mdiff --git a/src/components/detail.vue b/src/components/detail.vue[m
+[1mdeleted file mode 100644[m
+[1mindex 33b7e73..0000000[m
+[1m--- a/src/components/detail.vue[m
+[1m+++ /dev/null[m
+[36m@@ -1,224 +0,0 @@[m
+[31m-<template>[m
+[31m-    <div>[m
+[31m-        <div class="section">[m
+[31m-            <div class="location">[m
+[31m-                <span>当前位置：</span>[m
+[31m-                <a href="/index.html">首页</a> &gt;[m
+[31m-                <a href="/goods.html">购物商城</a> &gt;[m
+[31m-                <a href="/goods/42/1.html">商品详情</a>[m
+[31m-            </div>[m
+[31m-        </div>[m
+[31m-        <div class="section">[m
+[31m-            <div class="wrapper clearfix">[m
+[31m-                <div class="wrap-box">[m
+[31m-                    <div class="left-925">[m
+[31m-                        <div class="goods-box clearfix">[m
+[31m-                            <div class="pic-box"></div>[m
+[31m-                            <div class="goods-spec">[m
+[31m-                                <h1>{{goodsinfo.title}}</h1>[m
+[31m-                                <p class="subtitle">{{goodsinfo.sub_title}}</p>[m
+[31m-                                <div class="spec-box">[m
+[31m-                                    <dl>[m
+[31m-                                        <dt>货号</dt>[m
+[31m-                                        <dd id="commodityGoodsNo">{{goodsinfo.goods_no}}</dd>[m
+[31m-                                    </dl>[m
+[31m-                                    <dl>[m
+[31m-                                        <dt>市场价</dt>[m
+[31m-                                        <dd>[m
+[31m-                                            <s id="commodityMarketPrice">¥{{goodsinfo.market_price}}</s>[m
+[31m-                                        </dd>[m
+[31m-                                    </dl>[m
+[31m-                                    <dl>[m
+[31m-                                        <dt>销售价</dt>[m
+[31m-                                        <dd>[m
+[31m-                                            <em id="commoditySellPrice" class="price">¥{{goodsinfo.sell_price}}</em>[m
+[31m-                                        </dd>[m
+[31m-                                    </dl>[m
+[31m-                                </div>[m
+[31m-                                <div class="spec-box">[m
+[31m-                                    <dl>[m
+[31m-                                        <dt>购买数量</dt>[m
+[31m-                                        <dd>[m
+[31m-                                            <el-input-number v-model="byNum"  :min="1" :max="goodsinfo.stock_quantity" label="描述文字"></el-input-number>[m
+[31m-                                            <span class="stock-txt">[m
+[31m-                                                库存[m
+[31m-                                                <em id="commodityStockNum">{{goodsinfo.stock_quantity}}</em>件[m
+[31m-                                            </span>[m
+[31m-                                        </dd>[m
+[31m-                                    </dl>[m
+[31m-                                    <dl>[m
+[31m-                                        <dd>[m
+[31m-                                            <div id="buyButton" class="btn-buy">[m
+[31m-                                                <button onclick="cartAdd(this,'/',1,'/shopping.html');" class="buy">立即购买</button>[m
+[31m-                                                <button onclick="cartAdd(this,'/',0,'/cart.html');" class="add">加入购物车</button>[m
+[31m-                                            </div>[m
+[31m-                                        </dd>[m
+[31m-                                    </dl>[m
+[31m-                                </div>[m
+[31m-                            </div>[m
+[31m-                        </div>[m
+[31m-                        <div id="goodsTabs" class="goods-tab bg-wrap">[m
+[31m-                            <Affix>[m
+[31m-                                <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">[m
+[31m-                                    <ul>[m
+[31m-                                        <li>[m
+[31m-                                            <a href="javascript:;" @click="tabIndex=0" :class="{selected:tabIndex==0}" >商品介绍</a>[m
+[31m-                                        </li>[m
+[31m-                                        <li>[m
+[31m-                                            <a href="javascript:;" @click="tabIndex=1" :class="{selected:tabIndex==1}">商品评论</a>[m
+[31m-                                        </li>[m
+[31m-                                    </ul>[m
+[31m-                                </div>[m
+[31m-                            </Affix>[m
+[31m-                            <div class="tab-content entry" v-html="goodsinfo.content" v-show="tabIndex==0">[m
+[31m-                            </div>[m
+[31m-                            <div class="tab-content" v-show="tabIndex==1">[m
+[31m-                                <div class="comment-box">[m
+[31m-                                    <div id="commentForm" name="commentForm" class="form-box">[m
+[31m-                                        <div class="avatar-box">[m
+[31m-                                            <i class="iconfont icon-user-full"></i>[m
+[31m-                                        </div>[m
+[31m-                                        <div class="conn-box">[m
+[31m-                                            <div class="editor">[m
+[31m-                                                <textarea id="txtContent" name="txtContent" sucmsg=" " datatype="*10-1000" nullmsg="请填写评论内容！"></textarea>[m
+[31m-                                                <span class="Validform_checktip"></span>[m
+[31m-                                            </div>[m
+[31m-                                            <div class="subcon">[m
+[31m-                                                <input id="btnSubmit" name="submit" type="submit" value="提交评论" class="submit">[m
+[31m-                                                <span class="Validform_checktip"></span>[m
+[31m-                                            </div>[m
+[31m-                                        </div>[m
+[31m-                                    </div>[m
+[31m-                                    <ul id="commentList" class="list-box">[m
+[31m-                                        <p v-show="this.totalcount==0" style="margin: 5px 0px 15px 69px; line-height: 42px; text-align: center; border: 1px solid rgb(247, 247, 247);">暂无评论，快来抢沙发吧！</p>[m
+[31m-                                        <li v-for="(item,index) in comments" :key="item.id">[m
+[31m-                                            <div class="avatar-box">[m
+[31m-                                                <i class="iconfont icon-user-full"></i>[m
+[31m-                                            </div>[m
+[31m-                                            <div class="inner-box">[m
+[31m-                                                <div class="info">[m
+[31m-                                                    <span>{{item.user_name}}</span>[m
+[31m-                                                    <span>{{item.reply_time|shorTimeP}}</span>[m
+[31m-                                                </div>[m
+[31m-                                                <p>{{item.content}}</p>[m
+[31m-                                            </div>[m
+[31m-                                        </li>[m
+[31m-                                    </ul>[m
+[31m-                                    <div class="page-box" style="margin: 5px 0px 0px 62px;">[m
+[31m-                                         <Page @on-change="pageChange" :total="totalcount" placement='top' :page-size-opts="[5,10,20]" :page-size="pageSize" @on-page-size-change="sizeChange" show-sizer show-ele

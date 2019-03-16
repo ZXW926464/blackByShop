@@ -41,14 +41,11 @@
               <a>退出</a>
               <strong>|</strong>
             </span>
-            <a
-              href=""
-              class=""
-            >
+            <router-link to="/shopCart">
               <i class="iconfont icon-cart"></i>购物车(
               <span id="shoppingCartCount">
-                <span>4</span>
-              </span>)</a>
+                <span>{{$store.getters.totaNum}}</span>
+              </span></router-link>
           </div>
         </div>
       </div>
@@ -176,7 +173,9 @@
 
 <script>
 export default {
-  name: "app"
+  name: "app",
+  created(){
+  }
 };
 </script>
 

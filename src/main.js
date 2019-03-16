@@ -24,9 +24,14 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(iView);
 
+// 放大镜组件
+import ProductZoomer from 'vue-product-zoomer'
+Vue.use(ProductZoomer)
+
 // 导入每一个页面组件
 import index from './components/index.vue'
 import detail from './components/detail.vue'
+import shopCart from './components/shopCart.vue'
 
 // 写路由规则
 let routes = [
@@ -34,6 +39,7 @@ let routes = [
   { path: '/', redirect: '/index' },
   { path: '/index', component: index },
   { path: '/detail/:id', component: detail },
+  { path: '/shopCart', component: shopCart },
 ]
 
 // 实例化路由对象
@@ -52,8 +58,47 @@ Vue.filter('shorTimeP',  (value)=> {
   return moment(value).format("YYYY/MM/DD HH:mm:ss");
 })
 
+
+//导入vue-x
+import Vuex from 'vuex'
+Vue.use(Vuex)
+const store = new Vuex.Store({
+  state: {
+    cartData: JSON.parse(window.localStorage.getItem('blackBy'))||{}
+  },
+  mutations: {
+    addCart (state,obj) {
+      if(state.cartData[obj.goodsID]!=undefined){
+        state.cartData[obj.goodsID]+=obj.goodsNum
+      }else{
+        // state.cartData[obj.goodsID]=obj.goodsNum
+        //动态添加属性需要手动vue.set
+        Vue.set(state.cartData,obj.goodsID,obj.goodsNum)
+      }
+      // console.log(state.cartData);
+    }
+  },
+  getters: {
+    totaNum: (state) => {
+      let num =0
+      for (const key in state.cartData) {
+          num+=state.cartData[key]
+      }
+      return num
+    }
+  }
+})
+
+
+
+window.onbeforeunload=function(){
+  window.localStorage.setItem('blackBy',JSON.stringify(store.state.cartData
+    ))
+}
+
 new Vue({
   render: h => h(App),
   //传入路由对象
-  router
+  router,
+  store
 }).$mount('#app')
