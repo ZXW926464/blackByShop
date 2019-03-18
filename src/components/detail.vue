@@ -345,7 +345,13 @@ export default {
       this.$store.commit('addCart',{
         goodsID:this.artID,
         goodsNum:this.byNum
-      })
+      }),
+      this.$notify({
+          title: '成功',
+          message: '添加购物车成功.',
+          type: 'success',
+          duration:1000
+        });
     }
   },
   created() {

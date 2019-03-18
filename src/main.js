@@ -32,6 +32,7 @@ Vue.use(ProductZoomer)
 import index from './components/index.vue'
 import detail from './components/detail.vue'
 import shopCart from './components/shopCart.vue'
+import jiesuan from './components/jiesuan.vue'
 
 // 写路由规则
 let routes = [
@@ -40,11 +41,29 @@ let routes = [
   { path: '/index', component: index },
   { path: '/detail/:id', component: detail },
   { path: '/shopCart', component: shopCart },
+  { path: '/jiesuan', component: jiesuan },
 ]
 
 // 实例化路由对象
 let router = new VueRouter({
   routes
+})
+
+//导航守卫
+router.beforeEach((to, from, next) => {
+  if(to.path=="/jiesuan"){
+      axios.get('site/account/islogin').then(res=>{
+      if(res.data.code=='nologin'){
+       Vue.prototype.$message({
+          message: '请先登录',
+          type: 'warning'
+        });
+        router.push('/index')
+      }
+    })
+  }else{
+    next()
+  }
 })
 
 
@@ -76,6 +95,9 @@ const store = new Vuex.Store({
         Vue.set(state.cartData,obj.goodsID,obj.goodsNum)
       }
       // console.log(state.cartData);
+    },
+    upCart(state,obj){
+      state.cartData=obj
     }
   },
   getters: {

@@ -62,10 +62,7 @@
                   >
                     <a>选择</a>
                   </th>
-                  <th
-                    align="left"
-                    colspan="2"
-                  >商品信息</th>
+                  <th align="left">商品信息</th>
                   <th
                     width="84"
                     align="left"
@@ -83,7 +80,39 @@
                     align="center"
                   >操作</th>
                 </tr>
-                <tr>
+                <!-- 有商品显示的内容 -->
+                <tr
+                  v-for="(item,index) in goodslist"
+                  :key="item.id"
+                >
+                  <td>
+                    <el-switch
+                      v-model="item.isOk"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                    >
+                    </el-switch>
+                  </td>
+                  <td class="two">
+                    <img
+                      :src="item.img_url"
+                      alt=""
+                    >
+                    <span>{{item.title}}</span>
+                  </td>
+                  <td>{{item.sell_price}}</td>
+                  <td><el-input-number
+                      v-model="item.buycount"
+                      size="mini"
+                      :min="0"
+                    ></el-input-number></td>
+                  <td>{{item.buycount*item.sell_price}}</td>
+                  <td>
+                    <el-button @click="delShop(item.id)" type="danger" icon="el-icon-delete" circle></el-button>
+                  </td>
+                </tr>
+                <!-- 没有商品显示的内容 -->
+                <tr v-show="goodslist.length==0">
                   <td colspan="10">
                     <div class="msg-tips">
                       <div class="icon warning">
@@ -106,12 +135,12 @@
                     <b
                       class="red"
                       id="totalQuantity"
-                    >0</b> 件 &nbsp;&nbsp;&nbsp; 商品总金额（不含运费）：
+                    >{{zongNum}}</b> 件 &nbsp;&nbsp;&nbsp; 商品总金额（不含运费）：
                     <span class="red">￥</span>
                     <b
                       class="red"
                       id="totalAmount"
-                    >0</b>元
+                    >{{zongPrice}}</b>元
                   </th>
                 </tr>
               </tbody>
@@ -121,14 +150,12 @@
           <!--购物车底部-->
           <div class="cart-foot clearfix">
             <div class="right-box">
-              <button
+              <router-link to="/index"><button
                 class="button"
-                onclick="javascript:location.href='/index.html';"
-              >继续购物</button>
-              <button
+              >继续购物</button></router-link>
+              <router-link to="/jiesuan"><button
                 class="submit"
-                onclick="formSubmit(this, '/', '/shopping.html');"
-              >立即结算</button>
+              >立即结算</button></router-link>
             </div>
           </div>
           <!--购物车底部-->
@@ -144,8 +171,103 @@
 </template>
 <script>
 export default {
-  name: "shopCart"
+  name: "shopCart",
+  data() {
+    return {
+      //购物车数据
+      goodslist: []
+    };
+  },
+  methods: {
+    //删除数据
+    delShop(id){
+       this.$confirm('此操作将删除该商品, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.goodslist.forEach((v,index)=>{
+            if(v.id==id){
+              this.goodslist.splice(index,1)
+            }
+          })
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    }
+  },
+  //计算属性
+  computed: {
+    // 总个数
+    zongNum() {
+      let num = 0;
+      this.goodslist.forEach(v => {
+        if (v.isOk == true) {
+          num += v.buycount;
+        }
+      });
+      return num;
+    },
+    //总价格
+    zongPrice() {
+      let price = 0;
+      this.goodslist.forEach(v => {
+        if (v.isOk == true) {
+          price += v.buycount * v.sell_price;
+        }
+      });
+      return price;
+    }
+  },
+  //声明周期
+  created() {
+    let ids = "";
+    for (const key in this.$store.state.cartData) {
+      ids += key;
+      ids += ",";
+    }
+    ids = ids.slice(0, ids.length - 1);
+    this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(res => {
+      // console.log(res);
+      res.data.message.forEach(e => {
+        e.buycount = this.$store.state.cartData[e.id];
+        e.isOk = true;
+      });
+      this.goodslist = res.data.message;
+      // console.log(this.goodslist);
+    });
+  },
+  //深度监听数据
+  watch: {
+    goodslist: {
+      handler: function(val, oldVal) {
+        let obj = {};
+        val.forEach(v => {
+          obj[v.id] = v.buycount;
+        });
+        this.$store.commit("upCart", obj);
+      },
+      deep: true
+    }
+  }
 };
 </script>
 <style>
+td img {
+  width: 100px;
+}
+td > span {
+  margin-left: 10px;
+}
+td:nth-child(2) {
+  display: flex;
+  align-items: center;
+}
 </style>
