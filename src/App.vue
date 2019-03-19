@@ -20,11 +20,8 @@
             id="menu"
             class="right-box"
           >
-            <span style="display: none;">
-              <a
-                href=""
-                class=""
-              >登录</a>
+            <span v-show="$store.state.islogin==false" style="display=none">
+              <router-link to="login">登录</router-link>
               <strong>|</strong>
               <a
                 href=""
@@ -32,13 +29,13 @@
               >注册</a>
               <strong>|</strong>
             </span>
-            <span>
+            <span v-show="$store.state.islogin==true">
               <a
                 href=""
                 class=""
               >会员中心</a>
               <strong>|</strong>
-              <a>退出</a>
+              <a @click="outlogin">退出</a>
               <strong>|</strong>
             </span>
             <router-link to="/shopCart">
@@ -174,6 +171,20 @@
 <script>
 export default {
   name: "app",
+  methods: {
+    outlogin(){
+      this.$axios.get('site/account/logout').then(res=>{
+        if(res.data.status==0){
+          this.$message({
+                message: "用户已注销",
+                type: "success"
+              });
+              this.$router.push('/index')
+              this.$store.commit('changelogin',false)
+        }
+      })
+    }
+  },
   created(){
   }
 };

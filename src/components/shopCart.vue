@@ -153,7 +153,7 @@
               <router-link to="/index"><button
                 class="button"
               >继续购物</button></router-link>
-              <router-link to="/jiesuan"><button
+              <router-link :to="'/jiesuan/'+selectedIds"><button
                 class="submit"
               >立即结算</button></router-link>
             </div>
@@ -224,6 +224,18 @@ export default {
         }
       });
       return price;
+    },
+    //选中商品的id
+    selectedIds(){
+      let ids=''
+      this.goodslist.forEach(v=>{
+        if(v.isOk==true){
+          ids+=v.id
+          ids+=','
+        }
+      })
+      ids=ids.slice(0,ids.length-1)
+      return ids
     }
   },
   //声明周期
