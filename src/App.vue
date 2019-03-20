@@ -6,7 +6,7 @@
       <div class="head-top">
         <div class="section">
           <div class="left-box">
-            <span>黑马买买买</span>
+            <span>买买买</span>
             <a
               target="_blank"
               href="#"
@@ -30,10 +30,7 @@
               <strong>|</strong>
             </span>
             <span v-show="$store.state.islogin==true">
-              <a
-                href=""
-                class=""
-              >会员中心</a>
+              <router-link to="/vipContent">个人中心</router-link>
               <strong>|</strong>
               <a @click="outlogin">退出</a>
               <strong>|</strong>
@@ -62,11 +59,15 @@
                   >首页</span></router-link>
               </li>
               <li class="news">
-                <router-link to="/detail"> <span
+                <a
+                  href="#"
+                  class=""
+                >
+                  <span
                     class="out"
                     style="top: 0px;"
-                  >每日精选</span></router-link>
-
+                  >每日精选</span>
+                </a>
               </li>
               <li class="photo">
                 <a
@@ -87,7 +88,7 @@
                   <span
                     class="out"
                     style="top: 0px;"
-                  >黑马超市</span>
+                  >在线超市</span>
                 </a>
               </li>
               <li class="down">

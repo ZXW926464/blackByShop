@@ -33,12 +33,19 @@ Vue.use(ProductZoomer)
 import Distpicker from 'v-distpicker'
 Vue.component('v-distpicker', Distpicker)
 
+//二维码插件
+import VueQrcode from '@chenfengyuan/vue-qrcode';
+Vue.component(VueQrcode.name, VueQrcode);
+
 // 导入每一个页面组件
 import index from './components/index.vue'
 import detail from './components/detail.vue'
 import shopCart from './components/shopCart.vue'
 import jiesuan from './components/jiesuan.vue'
 import login from './components/login.vue'
+import orderInfo from './components/orderInfo.vue'
+import paySuccess from './components/paySuccess.vue'
+import vipContent from './components/vipContent.vue'
 
 // 写路由规则
 let routes = [
@@ -47,8 +54,11 @@ let routes = [
   { path: '/index', component: index },
   { path: '/detail/:id', component: detail },
   { path: '/shopCart', component: shopCart },
-  { path: '/jiesuan/:ids', component: jiesuan },
+  { path: '/jiesuan/:ids', component: jiesuan ,meta:{isLogin:true}},
   { path: '/login', component: login },
+  { path: '/orderInfo/:orderId', component: orderInfo ,meta:{isLogin:true}},
+  { path: '/paySuccess', component: paySuccess ,meta:{isLogin:true}},
+  { path: '/vipContent', component: vipContent ,meta:{isLogin:true}},
 ]
 
 // 实例化路由对象
@@ -58,7 +68,7 @@ let router = new VueRouter({
 
 //导航守卫
 router.beforeEach((to, from, next) => {
-  if (to.path .indexOf('/jiesuan')!=-1) {
+  if (to.meta.isLogin==true) {
     axios.get('site/account/islogin').then(res => {
       if (res.data.code == 'nologin') {
         Vue.prototype.$message({
@@ -111,6 +121,9 @@ const store = new Vuex.Store({
     },
     changelogin(state,islogin){
       state.islogin=islogin
+    },
+    delbyid(state,id){
+      Vue.delete(state.cartData, id)
     }
   },
   getters: {
