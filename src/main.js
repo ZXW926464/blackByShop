@@ -46,6 +46,9 @@ import login from './components/login.vue'
 import orderInfo from './components/orderInfo.vue'
 import paySuccess from './components/paySuccess.vue'
 import vipContent from './components/vipContent.vue'
+import orderList from './components/orderList.vue'
+import orderDetail from './components/orderDetail.vue'
+import orderIndex from './components/orderIndex.vue'
 
 // 写路由规则
 let routes = [
@@ -58,12 +61,24 @@ let routes = [
   { path: '/login', component: login },
   { path: '/orderInfo/:orderId', component: orderInfo ,meta:{isLogin:true}},
   { path: '/paySuccess', component: paySuccess ,meta:{isLogin:true}},
-  { path: '/vipContent', component: vipContent ,meta:{isLogin:true}},
+  { path: '/vipContent', component: vipContent ,meta:{isLogin:true},children:[{
+    path: '/', redirect: 'orderIndex' 
+  },{
+    path:'orderList',component:orderList
+  },{
+    path:'orderDetail/:id',component:orderDetail
+  },{
+    path:'orderIndex',component:orderIndex
+  }]},
 ]
 
 // 实例化路由对象
 let router = new VueRouter({
-  routes
+  routes,
+  scrollBehavior (to, from, savedPosition) {
+    // return 期望滚动到哪个的位置
+    return { x: 0, y: 0 }
+  }
 })
 
 //导航守卫
